@@ -13,9 +13,11 @@ namespace cg_task6;
 class Window : GameWindow
 {
     private List<Triangle> model;
-    private Vector4 lightPos = new(-1, 0, 0, 1);
-    private Vector4 ambLight = new(1, 1, 1, 1);
+    private Vector4 lightPos = new(-1, 0, 0, 0);
+    private Vector4 ambLight = new(.3f, .3f, .3f, 1);
     private Vector4 diffLight = new(1, 1, 1, 1);
+    private Vector4 specLight = new(.2f, .2f, .2f, 1);
+    private readonly float constAtt = 1f, linAtt = 1f, quadAtt = 2f;
     private int texture;
     private double frameTime = 0;
     private int fps = 0;
@@ -32,16 +34,20 @@ class Window : GameWindow
         using Stream stream = File.OpenRead("models/model.obj");
         model = OBJ.Load(stream);
 
+        LoadTex("models/model.jpg");
+
         GL.ClearColor(Color4.Black);
         GL.Enable(EnableCap.DepthTest);
 
         GL.Enable(EnableCap.Lighting);
-        GL.Light(LightName.Light0, LightParameter.Position, lightPos);
-        GL.Light(LightName.Light0, LightParameter.Ambient, ambLight);
-        GL.Light(LightName.Light0, LightParameter.Diffuse, diffLight);
-        GL.Enable(EnableCap.Light0);
-
-        LoadTex("models/model.jpg");
+        GL.Light(LightName.Light1, LightParameter.Position, lightPos);
+        GL.Light(LightName.Light1, LightParameter.Ambient, ambLight);
+        GL.Light(LightName.Light1, LightParameter.Diffuse, diffLight);
+        GL.Light(LightName.Light1, LightParameter.Specular, specLight);
+        GL.Light(LightName.Light1, LightParameter.ConstantAttenuation, constAtt);
+        GL.Light(LightName.Light1, LightParameter.LinearAttenuation, linAtt);
+        GL.Light(LightName.Light1, LightParameter.QuadraticAttenuation, quadAtt);
+        GL.Enable(EnableCap.Light1);
     }
 
     private void LoadTex(string fileName)
