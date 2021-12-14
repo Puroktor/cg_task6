@@ -29,7 +29,7 @@ class Window : GameWindow
     protected override void OnLoad()
     {
         base.OnLoad();
-        using Stream stream = File.OpenRead("woman.obj");
+        using Stream stream = File.OpenRead("model.obj");
         model = OBJ.Load(stream);
 
         GL.ClearColor(Color4.Black);
@@ -41,7 +41,7 @@ class Window : GameWindow
         GL.Light(LightName.Light0, LightParameter.Diffuse, diffLight);
         GL.Enable(EnableCap.Light0);
 
-        LoadTex("woman.jpg");
+        LoadTex("model.jpg");
     }
 
     private void LoadTex(string fileName)

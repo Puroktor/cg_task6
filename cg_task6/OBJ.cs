@@ -14,7 +14,6 @@ static class OBJ
         List<Vector3> vn = new();
         float[] min = {float.MaxValue, float.MaxValue, float.MaxValue };
         float[] max = { float.MinValue, float.MinValue, float.MinValue };
-        bool normalized = false;
 
         using StreamReader reader = new(stream);
         string inp;
@@ -39,11 +38,6 @@ static class OBJ
                     vn.Add(ReadVector(str[1]));
                     break;
                 case "f":
-                    if (!normalized)
-                    {
-                        Normalize(v, min, max);
-                        normalized = true;
-                    }
                     string[] point = str[1].Split();
                     Triangle triangle = new();
                     for (int i = 0; i < 3; i++)
@@ -59,10 +53,11 @@ static class OBJ
                     break;
             }
         }
+        Normalize(triangles, min, max);
         return triangles;
     }
 
-    private static void Normalize(List<Vector3> v, float[] min, float[] max)
+    private static void Normalize(List<Triangle> triangles, float[] min, float[] max)
     {
         float maxV = Math.Max(Math.Abs(max.Max()), Math.Abs(min.Min()));
         float[] m = new float[3];
@@ -70,15 +65,21 @@ static class OBJ
         {
             m[i] = (min[i] + max[i]) / 2f;
         }
-        for (int i = 0; i < v.Count; i++)
+        for (int i = 0; i < triangles.Count; i++)
         {
-            var vert = v[i];
+            var triangle = triangles[i];
             for (int j = 0; j < 3; j++)
             {
-                vert[j] -= m[j];
+                var p = triangle[j];
+                var cords = p.V;
+                for (int k = 0; k < 3; k++)
+                {
+                    cords[k]-= m[k];
+                }
+                p.V = cords / maxV;
+                triangle[j] = p;
             }
-            vert /= maxV;
-            v[i] = vert;
+            triangles[i] = triangle;
         }
     }
 
